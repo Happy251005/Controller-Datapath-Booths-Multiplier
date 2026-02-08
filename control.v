@@ -32,36 +32,34 @@ always @(*) begin
         else next_state = S0;
         S1: begin
             clrA = 1; ldM = 1; ldcount = 1; clrff = 1;
-            next_state = S7;
-        end
-        S7: begin
-            ldQ = 1;
-            clrff = 1;
             next_state = S2;
         end
         S2: begin
-            if (eqz) next_state = S6;
-            else if({Q0,Qm1} == 2'b01) next_state = S3;
-            else if({Q0,Qm1} == 2'b10) next_state = S4;
-            else next_state = S5;
+            ldQ = 1;
+            clrff = 1;
+            next_state = S3;
         end
         S3: begin
-            ldA = 1;
-            next_state = S5;
+            if (eqz) next_state = S5;
+            else if({Q0,Qm1} == 2'b01) begin
+                ldA = 1;
+                next_state = S4;
+            end
+            else if({Q0,Qm1} == 2'b10) begin
+                ldA = 1;
+                addSub = 1;
+                next_state = S4;
+            end
+            else next_state = S4;
         end
         S4: begin
-            ldA = 1;
-            addSub = 1;
-            next_state = S5;
-        end
-        S5: begin
             addSub = 0;
             sftA = 1; sftQ = 1; decCount = 1;
-            next_state = S2;
+            next_state = S3;
         end
-        S6: begin
+        S5: begin
             done = 1;
-            next_state = S6;
+            next_state = S5;
         end
         default: next_state = S0;
     endcase
